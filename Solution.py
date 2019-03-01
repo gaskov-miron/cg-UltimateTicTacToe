@@ -1,8 +1,6 @@
 import numpy as np
 import random
 
-random.seed(100000)
-
 
 class Game:
     def __init__(self):

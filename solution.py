@@ -31,7 +31,6 @@ def get_map_(index):
     return map_
 
 
-
 def draw_window(map_):
     for i in range(3):
         t = ''
@@ -40,8 +39,8 @@ def draw_window(map_):
         print(t[:-1])
         if i != 2:
             print('-+-+-')
-            
-            
+
+
 def winner(map_):
     for i in range(0, 3):
         if map_[i, 0] == map_[i, 1] == map_[i, 2] != -1:
