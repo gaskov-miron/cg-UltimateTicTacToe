@@ -35,6 +35,11 @@ def draw_window(win, map_, common_map):
             pygame.draw.line(win, (255, 255, 255), (200+i*300, 0+j*300+10), (200+i*300, 300+j*300-10), 5)
             pygame.draw.line(win, (255, 255, 255), (0+i*300+10, 100+j*300), (300+i*300-10, 100+j*300), 5)
             pygame.draw.line(win, (255, 255, 255), (0+i*30+10, 200+j*300), (300+i*300-10, 200+j*300), 5)
+    if engine.ROW != -1:
+        pygame.draw.line(win, (255, 0, 0), (engine.ROW*100, engine.COL*100), (engine.ROW*100+100, engine.COL*100), 5)
+        pygame.draw.line(win, (255, 0, 0), (engine.ROW*100+100, engine.COL*100+100), (engine.ROW*100, engine.COL*100+100), 5)
+        pygame.draw.line(win, (255, 0, 0), (engine.ROW*100+100, engine.COL*100), (engine.ROW*100+100, engine.COL*100+100), 5)
+        pygame.draw.line(win, (255, 0, 0), (engine.ROW*100, engine.COL*100), (engine.ROW*100, engine.COL*100+100), 5)
 
     pygame.draw.line(win, (255, 200, 0), (300, 0), (300, 900), 10)
     pygame.draw.line(win, (255, 200, 0), (600, 0), (600, 900), 10)
@@ -58,34 +63,43 @@ def draw_window(win, map_, common_map):
                 else:
                     pygame.draw.line(win, (255, 0, 0), (j*300+30, i*300+30), (j*300+270, i*300+270), 9)
                     pygame.draw.line(win, (255, 0, 0), (j*300+270, i*300+30), (j*300+30, i*300+270), 9)
+    if engine.ROW != -1 and common_map[engine.COL%3, engine.ROW%3] == -1:
+        x = 300*(engine.ROW%3)+100
+        y = 300*(engine.COL%3)
+        pygame.draw.line(win, (0, 255, 0), (x, y+10), (x, y+300-10), 5)
+        pygame.draw.line(win, (0, 255, 0), (x+100, y+10), (x+100, y+300-10), 5)
+        pygame.draw.line(win, (0, 255, 0), (x-100+10, y+100), (x+200-10, y+100), 5)
+        pygame.draw.line(win, (0, 255, 0), (x-100+10, y+200), (x+200-10, y+200), 5)
 
     pygame.display.update()
 
 
 win = pygame.display.set_mode((900, 1000))
 
-game1 = Game()
-game2 = Game()
+game = Game()
 engine = Engine()
-
-n = 0
 
 win.fill((0, 0, 0))
 pygame.display.update()
+n = 1
 
-while not is_leaf(engine.common_map):
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                if n == 0:
+while True:
+    game = Game()
+    engine = Engine()
+    n = int(n == 0)
+    if n == 0:
+        info1 = list(engine.get_info())
+        engine.play(*game.step(*info1))
+    while not is_leaf(engine.common_map):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                x = 3 * (engine.ROW % 3)
+                y = 3 * (engine.COL % 3)
+                if (engine.common_map[y//3, x//3] != -1) or (engine.ROW == -1) or ((x*100 < event.pos[0] < (x+3)*100) and (y*100 < event.pos[1] < (y+3)*100) and engine.map_[event.pos[1]//100, event.pos[0]//100] == -1):
+                    engine.play(event.pos[0]//100, event.pos[1]//100)
                     info1 = list(engine.get_info())
-                    engine.play(*game1.step(*info1))
-                else:
-                    info2 = list(engine.get_info())
-                    engine.play(*game2.step(*info2))
-                print(engine.common_map)
-                n = int(n == 0)
+                    engine.play(*game.step(*info1))
 
-    draw_window(win, engine.map_, engine.common_map)
+        draw_window(win, engine.map_, engine.common_map)
