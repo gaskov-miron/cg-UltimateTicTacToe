@@ -101,5 +101,4 @@ while True:
                     engine.play(event.pos[0]//100, event.pos[1]//100)
                     info1 = list(engine.get_info())
                     engine.play(*game.step(*info1))
-
         draw_window(win, engine.map_, engine.common_map)

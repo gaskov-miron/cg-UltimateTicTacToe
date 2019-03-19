@@ -51,6 +51,11 @@ class Engine:
             print(row, col, self.map_[col, row])
             raise()
         self.CurrentPlayer = int(self.CurrentPlayer == 0)
+        for i in range(3):
+            for j in range(3):
+                min_map = self.map_[3*j:3*(j+1), 3*i:3*(i+1)]
+                if is_leaf(min_map):
+                    self.common_map[j, i] = winner(min_map)
 
     def get_info(self):
         x = 3*(self.ROW % 3)
@@ -66,11 +71,5 @@ class Engine:
                 for j in range(9):
                     if self.map_[j, i] == -1:
                         list_of_actions.append((i, j))
-
-        for i in range(3):
-            for j in range(3):
-                min_map = self.map_[3*j:3*(j+1), 3*i:3*(i+1)]
-                if is_leaf(min_map):
-                    self.common_map[j, i] = winner(min_map)
 
         return self.ROW, self.COL, list_of_actions
