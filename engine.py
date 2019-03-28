@@ -29,10 +29,6 @@ class Engine:
         self.ROW = -1
         self.COL = -1
         self.CurrentPlayer = 1
-        self.common_map = np.array([[-1, -1, -1],
-                                    [-1, -1, -1],
-                                    [-1, -1, -1]])
-
         self.map_ = np.array([[-1, -1, -1, -1, -1, -1, -1, -1, -1],
                               [-1, -1, -1, -1, -1, -1, -1, -1, -1],
                               [-1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -43,33 +39,36 @@ class Engine:
                               [-1, -1, -1, -1, -1, -1, -1, -1, -1],
                               [-1, -1, -1, -1, -1, -1, -1, -1, -1]])
 
+        self.common_map = np.array([[-1, -1, -1],
+                                    [-1, -1, -1],
+                                    [-1, -1, -1]])
     def play(self, row, col):
         self.ROW, self.COL = row, col
-        if self.map_[col, row] == -1:
-            self.map_[col, row] = self.CurrentPlayer
+        if self.map_[row, col] == -1:
+            self.map_[row, col] = self.CurrentPlayer
         else:
-            print(row, col, self.map_[col, row])
+            print(row, col, self.common_map[row // 3, col // 3])
             raise()
         self.CurrentPlayer = int(self.CurrentPlayer == 0)
         for i in range(3):
             for j in range(3):
-                min_map = self.map_[3*j:3*(j+1), 3*i:3*(i+1)]
+                min_map = self.map_[3*i:3*(i+1), 3*j:3*(j+1)]
                 if is_leaf(min_map):
-                    self.common_map[j, i] = winner(min_map)
+                    self.common_map[i, j] = winner(min_map)
 
     def get_info(self):
-        x = 3*(self.ROW % 3)
-        y = 3*(self.COL % 3)
+        x = 3*(self.COL % 3)
+        y = 3*(self.ROW % 3)
         list_of_actions = []
         if self.common_map[y//3, x//3] == -1:
-            for i in range(x, x+3):
-                for j in range(y, y+3):
-                    if self.map_[j, i] == -1:
+            for i in range(y, y+3):
+                for j in range(x, x+3):
+                    if self.map_[i, j] == -1:
                         list_of_actions.append((i, j))
         else:
             for i in range(9):
                 for j in range(9):
-                    if self.map_[j, i] == -1:
+                    if self.map_[i, j] == -1 and self.common_map[i // 3, j // 3] == -1:
                         list_of_actions.append((i, j))
 
         return self.ROW, self.COL, list_of_actions

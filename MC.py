@@ -76,12 +76,12 @@ def simulation(MAP):
     return winner(MAP)
 
 
-MAP_b = np.array([[1, 1, -1],
-                  [0, 0, 1],
-                  [1, 1, 0]])
+MAP_b = np.array([[-1, -1, -1],
+                  [-1, -1, -1],
+                  [-1, -1, -1]])
 
 Pw, Pl, Ps = 0, 0, 0
-for i in range(10000):
+for i in range(1000):
     MAP = copy.deepcopy(MAP_b)
     win = simulation(MAP)
     if win == 1:
@@ -90,4 +90,4 @@ for i in range(10000):
         Pl += 1
     if win == -1:
         Ps += 1
-print((1*Pw + -1*Pl + 0*Ps)/10000, chances[get_index(MAP_b)])
+print("Pw:"+str(Pw/1000)+"Pl:"+str(-1*Pl/1000))
