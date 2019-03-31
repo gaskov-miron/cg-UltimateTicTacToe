@@ -60,7 +60,7 @@ class Engine:
         x = 3*(self.COL % 3)
         y = 3*(self.ROW % 3)
         list_of_actions = []
-        if self.common_map[y//3, x//3] == -1:
+        if self.common_map[y//3, x//3] == -1 and self.COL != -1:
             for i in range(y, y+3):
                 for j in range(x, x+3):
                     if self.map_[i, j] == -1:

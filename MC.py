@@ -77,11 +77,11 @@ def simulation(MAP):
 
 
 MAP_b = np.array([[-1, -1, -1],
-                  [-1, -1, -1],
+                  [-1,  1, -1],
                   [-1, -1, -1]])
 
 Pw, Pl, Ps = 0, 0, 0
-for i in range(1000):
+for i in range(10000):
     MAP = copy.deepcopy(MAP_b)
     win = simulation(MAP)
     if win == 1:
@@ -90,4 +90,4 @@ for i in range(1000):
         Pl += 1
     if win == -1:
         Ps += 1
-print("Pw:"+str(Pw/1000)+"Pl:"+str(-1*Pl/1000))
+print("Pw:"+str(Pw/10000)+"Pl:"+str(1*Pl/10000))

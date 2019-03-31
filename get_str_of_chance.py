@@ -7,54 +7,42 @@ a = '0.0|-0.23828125|0.23828125|-0.2421875|-0.5078125|0.0|0.2421875|0.0|0.507812
 chances = [float(i) for i in a.split('|')]
 
 
-def simulation(MAP):
-    while is_leaf(MAP) is False:
-        Player = round(random.uniform(0, 1))
-        if Player == 1:
-            Max = -1
-            best_i, best_j = -1, -1
-            for i in range(3):
-                for j in range(3):
-                    if MAP[j, i] == -1:
-                        MAP[j, i] = 1
+def simulation(map_):
+    possible_steps = np.argwhere(map_ == -1)
+    current_winner = winner(map_)
+    if possible_steps.size == 0 or current_winner != -1:
+        return current_winner
+    possible_steps = set([(possible_steps[i, 0], possible_steps[i, 1]) for i in range(possible_steps.shape[0])])
+    steps_done = set()
 
-                        if chances[get_index(MAP)] > Max:
-                            best_i = i
-                            best_j = j
-                            Max = chances[get_index(MAP)]
-
-                        MAP[j, i] = -1
-            MAP[best_j, best_i] = 1
-        else:
-            Max = 1
-            best_i, best_j = -1, -1
-            for i in range(3):
-                for j in range(3):
-                    if MAP[j, i] == -1:
-                        MAP[j, i] = 0
-
-                        if chances[get_index(MAP)] < Max:
-                            best_i = i
-                            best_j = j
-                            Max = chances[get_index(MAP)]
-
-                        MAP[j, i] = -1
-            MAP[best_j, best_i] = 0
-    return winner(MAP)
+    while len(possible_steps) != 0:
+        player = round(random.uniform(0, 1))
+        best_step, best_score = None, None
+        for step in possible_steps:
+            map_[step[0], step[1]] = player
+            score = chances[get_index(map_)]
+            map_[step[0], step[1]] = -1
+            if best_step is None or (player == 1 and score > best_score) or (player == 0 and score < best_score):
+                best_step, best_score = step, score
+        map_[best_step[0], best_step[1]] = player
+        possible_steps.remove(best_step)
+        steps_done.add(best_step)
+        current_winner = winner(map_)
+        if current_winner != -1:
+            break
+    for step in steps_done:
+        map_[step[0], step[1]] = -1
+    return current_winner
 
 
-def get_Pw_Pl(MAP_b):
-    Pw, Pl, Ps = 0, 0, 0
-    for i in range(100):
-        MAP = copy.deepcopy(MAP_b)
-        win = simulation(MAP)
-        if win == 1:
-            Pw += 1
-        if win == 0:
-            Pl += 1
-        if win == -1:
-            Ps += 1
-    return "Pw:" + str(Pw / 100) + "Pl:" + str(-1 * Pl / 100)
+def get_Pw_Pl(map_):
+    outcomes = np.array([0, 0])
+    for i in range(1000):
+        win = simulation(map_)
+        if win != -1:
+            outcomes[win] += 1
+    outcomes = outcomes / 1000
+    return f'Pw:{outcomes[1]}Pl:{-outcomes[0]}'
 
 
 def get_map_(index):
