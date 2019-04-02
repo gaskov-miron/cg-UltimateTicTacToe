@@ -33,7 +33,7 @@ def get_common_chances(common_map, X_chances, O_chances):
         return 0, 0, 1
 
     outcomes = np.array([0, 0, 0])
-    for i in range(1000):
+    for t in range(1000):
         np.random.shuffle(free_cells)
         current_winner = -1
         step = -1
@@ -54,7 +54,7 @@ def get_common_chances(common_map, X_chances, O_chances):
             current_winner = 2
         outcomes[current_winner] += 1
         for k in range(step + 1):
-            common_map[free_cells[k]] = -1
+            common_map[free_cells[k][0], free_cells[k][1]] = -1
     outcomes = outcomes / 1000
     return outcomes[1], outcomes[0], outcomes[2]
 
@@ -119,7 +119,7 @@ class Game:
     def step(self, opponent_row, opponent_col, list_of_action):
         if opponent_col != -1 and opponent_row != -1:
             self.map_[opponent_row, opponent_col] = 0
-        best_row, best_col = self.score(1, 1, list_of_action)[1]
+        best_row, best_col = self.score(1, 2, list_of_action)[1]
         self.map_[best_row, best_col] = 1
         return best_row, best_col
 
@@ -140,9 +140,6 @@ class Game:
                         if is_leaf(min_map):
                             self.common_map[a, b] = winner(min_map)
                 new_score = self.score(int(player == 0), n-1, self.get_list_of_action(i, j))[0]
-                if (i, j) == (4, 4):
-                    print(self.map_)
-                    print(best_score, new_score)
                 if best_score is None or new_score > best_score and player == 1:
                     best_step, best_score = (i, j), new_score
                 if best_score is None or new_score < best_score and player != 1:

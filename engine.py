@@ -43,18 +43,19 @@ class Engine:
                                     [-1, -1, -1],
                                     [-1, -1, -1]])
     def play(self, row, col):
-        self.ROW, self.COL = row, col
-        if self.map_[row, col] == -1:
-            self.map_[row, col] = self.CurrentPlayer
-        else:
-            print(row, col, self.common_map[row // 3, col // 3])
-            raise()
-        self.CurrentPlayer = int(self.CurrentPlayer == 0)
-        for i in range(3):
-            for j in range(3):
-                min_map = self.map_[3*i:3*(i+1), 3*j:3*(j+1)]
-                if is_leaf(min_map):
-                    self.common_map[i, j] = winner(min_map)
+        if is_leaf(self.common_map) is False:
+            self.ROW, self.COL = row, col
+            if self.map_[row, col] == -1:
+                self.map_[row, col] = self.CurrentPlayer
+            else:
+                print(row, col, self.common_map[row // 3, col // 3])
+                raise()
+            self.CurrentPlayer = int(self.CurrentPlayer == 0)
+            for i in range(3):
+                for j in range(3):
+                    min_map = self.map_[3*i:3*(i+1), 3*j:3*(j+1)]
+                    if is_leaf(min_map):
+                        self.common_map[i, j] = winner(min_map)
 
     def get_info(self):
         x = 3*(self.COL % 3)
