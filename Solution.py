@@ -102,6 +102,11 @@ def get_index(map_):
 
 class Game:
     def __init__(self):
+        self.chances = chances_2
+        self.chances_b = chances
+        self.Xw = None
+        self.Ow = None
+        self.N = None
         self.map_ = np.array([[-1, -1, -1, -1, -1, -1, -1, -1, -1],
                               [-1, -1, -1, -1, -1, -1, -1, -1, -1],
                               [-1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -122,6 +127,13 @@ class Game:
         best_row, best_col = self.score(1, 2, list_of_action)[1]
         self.map_[best_row, best_col] = 1
         return best_row, best_col
+
+    def get_index(self, map_):
+        return get_index(map_)
+
+    def update_chances(self, common_map, map_):
+        Xchances, Ochances = get_Xchances_Ochances(map_)
+        self.Xw, self.Ow, self.N = get_common_chances(common_map, Xchances, Ochances)
 
     def score(self, player, n, list_of_action):
         if is_leaf(self.common_map) or n == 0:

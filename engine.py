@@ -14,16 +14,6 @@ def winner(map_):
     return -1
 
 
-def is_leaf(map_):
-    if winner(map_) != -1:
-        return True
-    for i in range(3):
-        for j in range(3):
-            if map_[i, j] == -1:
-                return False
-    return True
-
-
 class Engine:
     def __init__(self):
         self.ROW = -1
@@ -42,8 +32,10 @@ class Engine:
         self.common_map = np.array([[-1, -1, -1],
                                     [-1, -1, -1],
                                     [-1, -1, -1]])
+        self.winner = None
+
     def play(self, row, col):
-        if is_leaf(self.common_map) is False:
+        if self.is_leaf(self.common_map) is False:
             self.ROW, self.COL = row, col
             if self.map_[row, col] == -1:
                 self.map_[row, col] = self.CurrentPlayer
@@ -54,8 +46,19 @@ class Engine:
             for i in range(3):
                 for j in range(3):
                     min_map = self.map_[3*i:3*(i+1), 3*j:3*(j+1)]
-                    if is_leaf(min_map):
+                    if self.is_leaf(min_map):
                         self.common_map[i, j] = winner(min_map)
+        else:
+            self.winner = winner(self.common_map)
+
+    def is_leaf(self, map_):
+        if winner(map_) != -1:
+            return True
+        for i in range(3):
+            for j in range(3):
+                if map_[i, j] == -1:
+                    return False
+        return True
 
     def get_info(self):
         x = 3*(self.COL % 3)
