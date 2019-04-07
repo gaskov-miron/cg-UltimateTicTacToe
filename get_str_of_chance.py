@@ -42,7 +42,7 @@ def get_Pw_Pl(map_):
         if win != -1:
             outcomes[win] += 1
     outcomes = outcomes / 1000
-    return f'Pw:{outcomes[1]}Pl:{-outcomes[0]}'
+    return outcomes[1], outcomes[0]
 
 
 def get_map_(index):
@@ -130,8 +130,81 @@ map_ = np.array([[-1, -1, -1],
                  [-1, -1, -1],
                  [-1, -1, -1]])
 t = ''
-for i in range(19682):
-    t += '|'+str(get_Pw_Pl(get_map_(i)))
-    print(i)
-print(t[1:])
-z = 0
+global_mas = []
+for ind in range(19683):
+    if ind not in global_mas:
+        MAP_ = copy.deepcopy(get_map_(ind))
+        MAP_D = copy.deepcopy(get_map_(ind))
+        for i in range(3):
+            for j in range(3):
+                if MAP_[i, j] == 0:
+                    MAP_D[i, j] = 1
+                if MAP_[i, j] == 1:
+                    MAP_D[i, j] = 0
+        if is_leaf(MAP_):
+            wr = winner(MAP_)
+            if wr == 1:
+                t += 'X'
+            elif wr == 0:
+                t += 'N'
+            else:
+                t += 'S'
+        else:
+            Pw, Pl = get_Pw_Pl(MAP_)
+            t += str(Pw)[2:]+'-'+str(Pl)[2:]+'|'
+
+        for i in range(4):
+            global_mas.append(get_index(MAP_))
+            MAP_ = copy.deepcopy(np.rot90(MAP_))
+            global_mas.append(get_index(MAP_D))
+            MAP_D = copy.deepcopy(np.rot90(MAP_D))
+        MAP_ = copy.deepcopy(np.flip(MAP_, 0))
+        MAP_D = copy.deepcopy(np.flip(MAP_D, 0))
+        for i in range(4):
+            global_mas.append(get_index(MAP_))
+            MAP_ = copy.deepcopy(np.rot90(MAP_))
+            global_mas.append(get_index(MAP_D))
+            MAP_D = copy.deepcopy(np.rot90(MAP_D))
+
+g = []
+for i in t.split('|'):
+    if i[0] in '0123456789':
+        g.append(tuple(i.split('-')))
+    else:
+        for j in i:
+            if j == 'X':
+                g.append(('1', '0'))
+            elif j == 'N':
+                g.append(('0', '1'))
+            else:
+                g.append(('0', '0'))
+current = 0
+gg = [(-1, -1)]*19683
+for ind in range(19683):
+    if gg[ind][0] == -1:
+        MAP_ = get_map_(ind)
+        MAP_D = copy.deepcopy(get_map_(ind))
+        for i in range(3):
+            for j in range(3):
+                if MAP_[i, j] == 0:
+                    MAP_D[i, j] = 1
+                if MAP_[i, j] == 1:
+                    MAP_D[i, j] = 0
+        for i in range(4):
+            print(get_index(MAP_))
+            gg[get_index(MAP_)] = g[current]
+            MAP_ = copy.deepcopy(np.rot90(MAP_))
+            print(get_index(MAP_D))
+            gg[get_index(MAP_D)] = (g[current][1], g[current][0])
+            MAP_D = copy.deepcopy(np.rot90(MAP_D))
+        MAP_ = copy.deepcopy(np.flip(MAP_, 0))
+        MAP_D = copy.deepcopy(np.flip(MAP_D, 0))
+        for i in range(4):
+            print(get_index(MAP_))
+            gg[get_index(MAP_)] = g[current]
+            MAP_ = copy.deepcopy(np.rot90(MAP_))
+            print(get_index(MAP_D))
+            gg[get_index(MAP_D)] = (g[current][1], g[current][0])
+            MAP_D = copy.deepcopy(np.rot90(MAP_D))
+        current += 1
+print(gg)
