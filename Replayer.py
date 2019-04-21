@@ -36,14 +36,11 @@ def draw_window(win, map_, common_map):
             pygame.font.init()
             myfont = pygame.font.SysFont('Comic Sans MS', 20)
 
-            textsurface = myfont.render(Pw, False, (255, 255, 255))
+            textsurface = myfont.render(str(Pw), False, (255, 255, 255))
             win.blit(textsurface, (1050+j*200, 200+i*200))
 
-            textsurface = myfont.render(Pl, False, (255, 255, 255))
+            textsurface = myfont.render(str(Pl), False, (255, 255, 255))
             win.blit(textsurface, (1050+j*200, 225+i*200))
-
-            textsurface = myfont.render(str(game.chances_b[ID]), False, (255, 255, 255))
-            win.blit(textsurface, (1050+j*200, 250+i*200))
 
     myfont = pygame.font.SysFont('Comic Sans MS', 50)
     textsurface = myfont.render(str(game.Xw)+' '+str(game.Ow)+' '+str(game.N), False, (255, 255, 255))

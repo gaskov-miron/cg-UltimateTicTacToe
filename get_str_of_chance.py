@@ -41,7 +41,7 @@ def get_Pw_Pl(map_):
         win = simulation(map_)
         if win != -1:
             outcomes[win] += 1
-    outcomes = outcomes / 1000
+    outcomes = outcomes
     return outcomes[1], outcomes[0]
 
 
@@ -151,7 +151,7 @@ for ind in range(19683):
                 t += 'S'
         else:
             Pw, Pl = get_Pw_Pl(MAP_)
-            t += str(Pw)[2:]+'-'+str(Pl)[2:]+'|'
+            t += str(Pw)+'-'+str(Pl)+'|'
 
         for i in range(4):
             global_mas.append(get_index(MAP_))
@@ -178,6 +178,7 @@ for i in t.split('|'):
                 g.append(('0', '1'))
             else:
                 g.append(('0', '0'))
+print(t)
 current = 0
 gg = [(-1, -1)]*19683
 for ind in range(19683):
@@ -191,19 +192,15 @@ for ind in range(19683):
                 if MAP_[i, j] == 1:
                     MAP_D[i, j] = 0
         for i in range(4):
-            print(get_index(MAP_))
             gg[get_index(MAP_)] = g[current]
             MAP_ = copy.deepcopy(np.rot90(MAP_))
-            print(get_index(MAP_D))
             gg[get_index(MAP_D)] = (g[current][1], g[current][0])
             MAP_D = copy.deepcopy(np.rot90(MAP_D))
         MAP_ = copy.deepcopy(np.flip(MAP_, 0))
         MAP_D = copy.deepcopy(np.flip(MAP_D, 0))
         for i in range(4):
-            print(get_index(MAP_))
             gg[get_index(MAP_)] = g[current]
             MAP_ = copy.deepcopy(np.rot90(MAP_))
-            print(get_index(MAP_D))
             gg[get_index(MAP_D)] = (g[current][1], g[current][0])
             MAP_D = copy.deepcopy(np.rot90(MAP_D))
         current += 1
