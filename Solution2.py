@@ -75,14 +75,6 @@ def get_common_chances(common_map, X_chances, O_chances):
         for k in range(step + 1):
             common_map[free_cells[k][0], free_cells[k][1]] = -1
     outcomes = outcomes / 1000
-    g = open("history", "r")
-    t = g.read()
-    g.close()
-    t += ','.join(list(map(str, common_map.ravel()))+list(map(str, X_chances.ravel()))+list(map(str, O_chances.ravel())))
-    t += ','+str(outcomes[1])+','+str(outcomes[0])+','+str(outcomes[2])
-    g = open("history", "w")
-    g.write(t+'\n')
-    g.close()
     return outcomes[1], outcomes[0], outcomes[2]
 
 
@@ -161,10 +153,7 @@ for ind in range(19683):
         current += 1
 
 
-
-
-
-class Game:
+class Game2:
     def __init__(self):
         self.chances = gg
         self.Xw = None
