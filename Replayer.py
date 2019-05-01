@@ -1,6 +1,6 @@
 import pygame
 from engine import Engine
-from Solution import Game
+from Solution2 import Game2
 
 
 def draw_window(win, map_, common_map):
@@ -80,7 +80,7 @@ def draw_window(win, map_, common_map):
 
 
 win = pygame.display.set_mode((1700, 900))
-game = Game()
+game = Game2()
 engine = Engine()
 score_1 = 0
 score_2 = 0
@@ -88,7 +88,7 @@ win.fill((0, 0, 0))
 pygame.display.update()
 n = 1
 while True:
-    game = Game()
+    game = Game2()
     engine = Engine()
     n = int(n == 0)
     if n == 0:
