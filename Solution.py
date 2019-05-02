@@ -204,7 +204,7 @@ class Game:
         self.Xw, self.Ow, self.N = get_common_chances(common_map, Xchances, Ochances)
 
     def score(self, player, n, list_of_action):
-        if is_leaf(self.common_map) or n == 0:
+        if n == 0:
             X_chances, O_chances = get_Xchances_Ochances(self.map_)
             Xw, Ow, N = get_common_chances(self.common_map, X_chances, O_chances)
             return Xw-Ow, None

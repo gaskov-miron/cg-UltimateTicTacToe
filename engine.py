@@ -48,6 +48,8 @@ class Engine:
                     min_map = self.map_[3*i:3*(i+1), 3*j:3*(j+1)]
                     if self.is_leaf(min_map):
                         self.common_map[i, j] = winner(min_map)
+            if self.is_leaf(self.common_map):
+                self.winner = winner(self.common_map)
         else:
             self.winner = winner(self.common_map)
 

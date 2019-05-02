@@ -127,7 +127,7 @@ while True:
     game = Game()
     engine = Engine()
     game2 = Game2()
-    for i in range(n, 20 + n):
+    for i in range(n, 6 + n):
         x, y = round(random.uniform(0, 8)), round(random.uniform(0, 8))
         while can_not(x, y, engine.map_, engine.common_map):
             x, y = round(random.uniform(0, 8)), round(random.uniform(0, 8))
@@ -171,6 +171,7 @@ while True:
             engine.play(*game.step(*info1))
             game.update_chances(engine.common_map, engine.map_)
             draw_window(win, engine.map_, engine.common_map)
+
     if engine.winner == 0:
         if n == 0:
             win.fill((0, 0, 0))

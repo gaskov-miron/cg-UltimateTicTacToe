@@ -1,6 +1,7 @@
 import pygame
 from engine import Engine
 from Solution2 import Game2
+import numpy as np
 
 
 def draw_window(win, map_, common_map):
@@ -93,7 +94,8 @@ while True:
     n = int(n == 0)
     if n == 0:
         info1 = list(engine.get_info())
-        engine.play(*game.step(*info1))
+        row, col = game.step(*info1)
+        engine.play(row, col)
         game.update_chances(engine.common_map, engine.map_)
     while not engine.is_leaf(engine.common_map):
         for event in pygame.event.get():
@@ -105,7 +107,8 @@ while True:
                 if (engine.common_map[y//3, x//3] != -1) or (engine.ROW == -1) or ((x*100 < event.pos[0] < (x+3)*100) and (y*100 < event.pos[1] < (y+3)*100) and engine.map_[event.pos[1]//100, event.pos[0]//100] == -1):
                     engine.play(event.pos[1]//100, event.pos[0]//100)
                     info1 = list(engine.get_info())
-                    engine.play(*game.step(*info1))
+                    row, col = game.step(*info1)
+                    engine.play(row, col)
                     game.update_chances(engine.common_map, engine.map_)
         draw_window(win, engine.map_, engine.common_map)
     if engine.winner == 0:

@@ -71,40 +71,11 @@ def get_common_chances(common_map, X_chances, O_chances):
         return 1, 0, 0
     if current_winner == 0:
         return 0, 1, 0
-    free_cells = np.argwhere(common_map == -1)
-    if free_cells.size == 0:
-        return 0, 0, 1
     X = np.hstack((common_map.ravel(), X_chances.ravel(), O_chances.ravel()))
     Xw = Xw_coef[0] + X @ Xw_coef[1:]
     Ow = Ow_coef[0] + X @ Ow_coef[1:]
     N = N_coef[0] + X @ N_coef[1:]
     return Xw, Ow, N
-
-    #outcomes = np.array([0, 0, 0])
-    #for t in range(1000):
-    #    np.random.shuffle(free_cells)
-    #    current_winner = -1
-    #    step = -1
-    #    for step in range(free_cells.shape[0]):
-    #        i, j = free_cells[step]
-    #        dice = round(random.uniform(0, 100000))
-    #        a, b = X_chances[i, j] * 100000, (X_chances[i, j] + O_chances[i, j]) * 100000
-    #        if dice < a:
-    #            common_map[i, j] = 1
-    #        elif dice < b:
-    #            common_map[i, j] = 0
-    #        else:
-    #            common_map[i, j] = 2
-    #        current_winner = winner(common_map)
-    #        if current_winner != -1:
-    #            break
-    #    if current_winner == -1:
-    #        current_winner = 2
-    #    outcomes[current_winner] += 1
-    #    for k in range(step + 1):
-    #        common_map[free_cells[k][0], free_cells[k][1]] = -1
-    #outcomes = outcomes / 1000
-    #return outcomes[1], outcomes[0], outcomes[2]
 
 
 def winner(map_):
@@ -116,7 +87,7 @@ def winner(map_):
     if map_[0, 0] == map_[1, 1] == map_[2, 2] != -1 != 2:
         return map_[0, 0]
     if map_[2, 0] == map_[1, 1] == map_[0, 2] != -1 != 2:
-        return map_[i, 0]
+        return map_[2, 0]
     return -1
 
 
@@ -202,16 +173,24 @@ class Game2:
                                     [-1, -1, -1],
                                     [-1, -1, -1]])
 
+        self.X_chances = np.full((3, 3), 0.467)
+        self.O_chances = np.full((3, 3), 0.483)
+
+    def update_xo_chances(self, i, j):
+        idx = get_index(self.map_[i * 3:(i + 1) * 3, j * 3:(j + 1) * 3])
+        self.X_chances[i, j] = float(gg[idx][0])
+        self.O_chances[i, j] = float(gg[idx][1])
+
     def step(self, opponent_row, opponent_col, list_of_action):
         if opponent_col != -1 and opponent_row != -1:
             self.map_[opponent_row, opponent_col] = 0
+            self.update_xo_chances(opponent_row//3, opponent_col//3)
         best_row, best_col = self.score(1, 2, list_of_action)[1]
         self.map_[best_row, best_col] = 1
-        for a in range(3):
-            for b in range(3):
-                min_map = self.map_[3 * a:3 * (a + 1), 3 * b:3 * (b + 1)]
-                if is_leaf(min_map):
-                    self.common_map[a, b] = winner(min_map)
+        a, b = best_row//3, best_col//3
+        self.update_xo_chances(a, b)
+        min_map = self.map_[3 * a:3 * (a + 1), 3 * b:3 * (b + 1)]
+        self.common_map[a, b] = winner(min_map)
         return best_row, best_col
 
     def get_index(self, map_):
@@ -222,33 +201,33 @@ class Game2:
         self.Xw, self.Ow, self.N = get_common_chances(common_map, Xchances, Ochances)
 
     def score(self, player, n, list_of_action):
-        if is_leaf(self.common_map) or n == 0:
-            X_chances, O_chances = get_Xchances_Ochances(self.map_)
-            Xw, Ow, N = get_common_chances(self.common_map, X_chances, O_chances)
+        if n == 0:
+            Xw, Ow, N = get_common_chances(self.common_map, self.X_chances, self.O_chances)
             return Xw-Ow, None
         else:
             best_step, best_score = None, None
-            for row_col in (list_of_action):
+            for row_col in list_of_action:
                 i, j = row_col[0], row_col[1]
-
+                a, b = i//3, j//3
                 self.map_[i, j] = player
-                for a in range(3):
-                    for b in range(3):
-                        min_map = self.map_[3 * a:3 * (a + 1), 3 * b:3 * (b + 1)]
-                        if is_leaf(min_map):
-                            self.common_map[a, b] = winner(min_map)
+                old_Xw, old_Ow = self.X_chances[a, b], self.O_chances[a, b]
+                self.update_xo_chances(a, b)
+                min_map = self.map_[3 * a:3 * (a + 1), 3 * b:3 * (b + 1)]
+                if is_leaf(min_map):
+                    self.common_map[a, b] = winner(min_map)
+
                 new_score = self.score(int(player == 0), n-1, self.get_list_of_action(i, j))[0]
                 if (best_score is None or new_score > best_score) and player == 1:
                     best_step, best_score = (i, j), new_score
                 if (best_score is None or new_score < best_score) and player != 1:
                     best_step, best_score = (i, j), new_score
                 self.map_[i, j] = -1
-                for a in range(3):
-                    for b in range(3):
-                        min_map = self.map_[3 * a:3 * (a + 1), 3 * b:3 * (b + 1)]
-                        if not is_leaf(min_map):
-                            self.common_map[a, b] = -1
+                min_map = self.map_[3 * a:3 * (a + 1), 3 * b:3 * (b + 1)]
+                if not is_leaf(min_map):
+                    self.common_map[a, b] = -1
+                self.X_chances[a, b], self.O_chances[a, b] = old_Xw, old_Ow
             return best_score, best_step
+
 
     def get_list_of_action(self, y, x):
         list_of_actions = []
