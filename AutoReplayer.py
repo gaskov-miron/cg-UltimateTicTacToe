@@ -1,7 +1,7 @@
 import pygame
 from engine import Engine
+from Solution3 import Game3
 from Solution import Game
-from Solution2 import Game2
 import random
 
 
@@ -115,8 +115,8 @@ def draw_window(win, map_, common_map):
 
 
 win = pygame.display.set_mode((1700, 900))
-game = Game()
-game2 = Game2()
+game = Game3()
+game2 = Game()
 engine = Engine()
 score_1 = 0
 score_2 = 0
@@ -124,9 +124,9 @@ win.fill((0, 0, 0))
 pygame.display.update()
 n = 1
 while True:
-    game = Game()
+    game = Game3()
     engine = Engine()
-    game2 = Game2()
+    game2 = Game()
     for i in range(n, 6 + n):
         x, y = round(random.uniform(0, 8)), round(random.uniform(0, 8))
         while can_not(x, y, engine.map_, engine.common_map):
@@ -157,7 +157,7 @@ while True:
     if n == 0:
         info1 = list(engine.get_info())
         engine.play(*game.step(*info1))
-        game.update_chances(engine.common_map, engine.map_)
+        #game.update_chances(engine.common_map, engine.map_)
     while not engine.is_leaf(engine.common_map):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -169,7 +169,7 @@ while True:
         if not engine.is_leaf(engine.common_map):
             info1 = list(engine.get_info())
             engine.play(*game.step(*info1))
-            game.update_chances(engine.common_map, engine.map_)
+#            game.update_chances(engine.common_map, engine.map_)
             draw_window(win, engine.map_, engine.common_map)
 
     if engine.winner == 0:
@@ -181,8 +181,8 @@ while True:
             score_1 += 1
         if n == 1:
             win.fill((0, 0, 0))
-            myfont = pygame.font.SysFont('SOLUTION', 250)
-            textsurface = myfont.render('SOLUTION', False, (255, 255, 255))
+            myfont = pygame.font.SysFont('SOLUTION3', 250)
+            textsurface = myfont.render('SOLUTION3', False, (255, 255, 255))
             win.blit(textsurface, (500, 400))
             score_2 += 1
     if engine.winner == 1:
@@ -194,8 +194,8 @@ while True:
             score_1 += 1
         if n == 0:
             win.fill((0, 0, 0))
-            myfont = pygame.font.SysFont('SOLUTION', 250)
-            textsurface = myfont.render('SOLUTION', False, (255, 255, 255))
+            myfont = pygame.font.SysFont('SOLUTION3', 250)
+            textsurface = myfont.render('SOLUTION3', False, (255, 255, 255))
             win.blit(textsurface, (500, 400))
             score_2 += 1
     if engine.winner == -1:
@@ -203,6 +203,6 @@ while True:
         myfont = pygame.font.SysFont('NOBODY LOSE, NOBODY WIN', 50)
         textsurface = myfont.render('NOBODY LOSE, NOBODY WIN', False, (255, 255, 255))
         win.blit(textsurface, (400, 400))
-    game.update_chances(engine.common_map, engine.map_)
+    #game.update_chances(engine.common_map, engine.map_)
     pygame.display.update()
     pygame.time.delay(5000)
